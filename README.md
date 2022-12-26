@@ -68,3 +68,18 @@ html에서 form태그를 통해서 값을 보낼때 @RequestParam으로 값을 �
 
 </details>
 <br>
+
+<details>
+<summary style="font-size: x-large">ModelAndView</summary>
+Controller 처리 결과 후 응답할 view와 view에 전달할 값을 저장
+ModelAndView는 데이터와 이동하고자 하는 View Page를 같이 저장한다.
+
+예시로 아래와 같이 사용할 수 있다.
+@RequestMapping("/api/member")
+public ModelAndView view(){
+
+//데이터와 뷰를 동시에 설정 가능하다
+return new ModelAndView("index", "123");
+
+</details>
+<br>
