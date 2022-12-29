@@ -1,5 +1,6 @@
 package JustJava.order;
 
+import justJava.Appconfig;
 import justJava.member.Grade;
 import justJava.member.Member;
 import justJava.member.MemberService;
@@ -8,12 +9,20 @@ import justJava.order.Order;
 import justJava.order.OrderService;
 import justJava.order.OrderServiceImpl;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class OrderServiceTest {
 
-    MemberService memberService = new MemberServiceImpl();
-    OrderService orderService = new OrderServiceImpl();
+    MemberService memberService;
+    OrderService orderService;
+
+    @BeforeEach
+    public void beforeEach() {
+        Appconfig appconfig = new Appconfig();
+        memberService = appconfig.memberService();
+        orderService = appconfig.orderService();
+    }
 
 
     @Test
