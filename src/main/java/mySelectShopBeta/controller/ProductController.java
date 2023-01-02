@@ -1,42 +1,47 @@
 package mySelectShopBeta.controller;
+
+import lombok.RequiredArgsConstructor;
 import mySelectShopBeta.Dto.ProductMypriceRequestDto;
 import mySelectShopBeta.Dto.ProductRequestDto;
 import mySelectShopBeta.Dto.ProductResponseDto;
 import mySelectShopBeta.naver.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
-import java.sql.SQLException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
 
-    public ProductController() {
-        this.productService =  new ProductService();
-    }
 
     // 관심 상품 등록하기
     @PostMapping("/products")
-    public ProductResponseDto createProduct(@RequestBody ProductRequestDto requestDto) throws SQLException {
+    public ProductResponseDto createProduct(@RequestBody ProductRequestDto requestDto, HttpServletRequest request) {
         // 응답 보내기
-        return productService.createProduct(requestDto);
+        return productService.createProduct(requestDto, request);
     }
 
     // 관심 상품 조회하기
     @GetMapping("/products")
-    public List<ProductResponseDto> getProducts() throws SQLException {
+    public List<ProductResponseDto> getProducts(HttpServletRequest request) {
         // 응답 보내기
-        return productService.getProducts();
+        return productService.getProducts(request);
     }
+
+
+
 
     // 관심 상품 최저가 등록하기
     @PutMapping("/products/{id}")
-    public Long updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto) throws SQLException {
+    public Long updateProduct(@PathVariable Long id, @RequestBody ProductMypriceRequestDto requestDto, HttpServletRequest request) {
         // 응답 보내기 (업데이트된 상품 id)
-        return productService.updateProduct(id, requestDto);
+        return productService.updateProduct(id, requestDto, request);
     }
+
+
 
 }
