@@ -1,7 +1,7 @@
 package justJava.order;
 
 import justJava.discount.DiscountPolicy;
-import justJava.discount.FixDiscountPolicy;
+
 import justJava.discount.RateDiscountPolicy;
 import justJava.member.Member;
 import justJava.member.MemberRepository;

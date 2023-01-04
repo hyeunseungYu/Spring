@@ -1,7 +1,7 @@
 package justJava;
 
 import justJava.discount.DiscountPolicy;
-import justJava.discount.FixDiscountPolicy;
+
 import justJava.discount.RateDiscountPolicy;
 import justJava.member.MemberService;
 import justJava.member.MemberServiceImpl;

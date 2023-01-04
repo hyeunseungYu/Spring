@@ -2,6 +2,7 @@ package JustJava.beanFind;
 
 import justJava.Appconfig;
 import justJava.discount.DiscountPolicy;
+
 import justJava.discount.FixDiscountPolicy;
 import justJava.discount.RateDiscountPolicy;
 import org.junit.jupiter.api.Assertions;
