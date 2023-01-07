@@ -1,409 +1,135 @@
-<!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html lang="ko" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Timeline Service</title>
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+    <link type="text/css" th:href="@{/css/style.css}" rel="stylesheet">
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@500&display=swap" rel="stylesheet">
-    <script>
-        $(document).ready(function () {
-            // HTML 문서를 로드할 때마다 실행합니다.
-            getMessages();
-        })
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/paginationjs/2.1.4/pagination.css"/>
 
-        // 메모를 불러와서 보여줍니다.
-        function getMessages() {
-            // 1. 기존 메모 내용을 지웁니다.
-            $('#cards-box').empty();
 
-            // 2. 메모 목록을 불러와서 HTML로 붙입니다.
-            $.ajax({
-                type: "GET",
-                url: "/api/memos",
-                data: {},
-                success: function (response) {
-                    for (let i = 0; i < response.length; i++) {
-                        let message = response[i];
-                        let id = message['id'];
-                        let username = message['username'];
-                        let contents = message['contents'];
-                        let modifiedAt = message['modifiedAt'];
-                        addHTML(id, username, contents, modifiedAt);
-                    }
-                }
-            });
-        }
-
-        // 메모 하나를 HTML로 만들어서 body 태그 내 원하는 곳에 붙입니다.
-        function addHTML(id, username, contents, modifiedAt) {
-            let tempHtml = makeMessage(id, username, contents, modifiedAt);
-            $('#cards-box').append(tempHtml);
-        }
-
-        function makeMessage(id, username, contents, modifiedAt) {
-            return `<div class="card">
-                        <!-- date/username 영역 -->
-                        <div class="metadata">
-                            <div class="date">
-                                ${modifiedAt}
-                            </div>
-                            <div id="${id}-username" class="username">
-                                ${username}
-                            </div>
-                        </div>
-                        <!-- contents 조회/수정 영역-->
-                        <div class="contents">
-                            <div id="${id}-contents" class="text">
-                                ${contents}
-                            </div>
-                            <div id="${id}-editarea" class="edit">
-                                <textarea id="${id}-textarea" class="te-edit" name="" id="" cols="30" rows="5"></textarea>
-                            </div>
-                        </div>
-                        <!-- 버튼 영역-->
-                        <div class="footer">
-                            <img id="${id}-edit" class="icon-start-edit" src="/images/edit.png" alt="" onclick="editPost('${id}')">
-                            <img id="${id}-delete" class="icon-delete" src="/images/delete.png" alt="" onclick="deleteOne('${id}')">
-                            <img id="${id}-submit" class="icon-end-edit" src="/images/done.png" alt="" onclick="submitEdit('${id}')">
-                        </div>
-                    </div>`;
-        }
-
-        // 사용자가 내용을 올바르게 입력하였는지 확인합니다.
-        function isValidContents(contents) {
-            if (contents == '') {
-                alert('내용을 입력해주세요');
-                return false;
-            }
-            if (contents.trim().length > 140) {
-                alert('공백 포함 140자 이하로 입력해주세요');
-                return false;
-            }
-            return true;
-        }
-
-        // 익명의 username을 만듭니다.
-        function genRandomName(length) {
-            let result = '';
-            let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            let charactersLength = characters.length;
-            for (let i = 0; i < length; i++) {
-                let number = Math.random() * charactersLength;
-                let index = Math.floor(number);
-                result += characters.charAt(index);
-            }
-            return result;
-        }
-
-        // 수정 버튼을 눌렀을 때, 기존 작성 내용을 textarea 에 전달합니다.
-        // 숨길 버튼을 숨기고, 나타낼 버튼을 나타냅니다.
-
-        // 메모를 생성합니다.
-        function writePost() {
-            // 1. 작성한 메모를 불러옵니다.
-            let contents = $('#contents').val();
-
-            // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
-            if (isValidContents(contents) == false) {
-                return;
-            }
-
-            // 3. genRandomName 함수를 통해 익명의 username을 만듭니다.
-            let username = genRandomName(10);
-
-            // 4. 전달할 data JSON으로 만듭니다.
-            let data = {'username': username, 'contents': contents};
-
-            $.ajax({
-                type: "POST",
-                url: "/api/memos",
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function (response) {
-                    alert('메시지가 성공적으로 작성되었습니다.');
-                    window.location.reload();
-                }
-            });
-        }
-
-        function editPost(id) {
-            showEdits(id);
-            let contents = $(`#${id}-contents`).text().trim();
-            $(`#${id}-textarea`).val(contents);
-        }
-
-        function showEdits(id) {
-            $(`#${id}-editarea`).show();
-            $(`#${id}-submit`).show();
-            $(`#${id}-delete`).show();
-
-            $(`#${id}-contents`).hide();
-            $(`#${id}-edit`).hide();
-        }
-
-        // 메모를 수정합니다.
-        function submitEdit(id) {
-            // 1. 작성 대상 메모의 username과 contents 를 확인합니다.
-            let username = $(`#${id}-username`).text().trim();
-            let contents = $(`#${id}-textarea`).val().trim();
-
-            // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
-            if (isValidContents(contents) == false) {
-                return;
-            }
-
-            // 3. 전달할 data JSON으로 만듭니다.
-            let data = {'username': username, 'contents': contents};
-
-            // 4. PUT /api/memos/{id} 에 data를 전달합니다.
-            $.ajax({
-                type: "PUT",
-                url: `/api/memos/${id}`,
-                contentType: "application/json",
-                data: JSON.stringify(data),
-                success: function (response) {
-                    alert('메시지 변경에 성공하였습니다.');
-                    window.location.reload();
-                }
-            });
-        }
-
-        function deleteOne(id) {
-            $.ajax({
-                type: "DELETE",
-                url: `/api/memos/${id}`,
-                success: function (response) {
-                    alert('메시지 삭제에 성공하였습니다.');
-                    window.location.reload();
-                }
-            })
-        }
-
-    </script>
-
-    <style>
-        @import url(//spoqa.github.io/spoqa-han-sans/css/SpoqaHanSans-kr.css);
-
-        body {
-            margin: 0px;
-        }
-
-        .area-edit {
-            display: none;
-        }
-
-        .wrap {
-            width: 538px;
-            margin: 10px auto;
-        }
-
-        #contents {
-            width: 538px;
-        }
-
-        .area-write {
-            position: relative;
-            width: 538px;
-        }
-
-        .area-write img {
-            cursor: pointer;
-            position: absolute;
-            width: 22.2px;
-            height: 18.7px;
-            bottom: 15px;
-            right: 17px;
-        }
-
-        .background-header {
-            position: fixed;
-            z-index: -1;
-            top: 0px;
-            width: 100%;
-            height: 428px;
-            background-color: #339af0;
-        }
-
-        .background-body {
-            position: fixed;
-            z-index: -1;
-            top: 428px;
-            height: 100%;
-            width: 100%;
-            background-color: #dee2e6;
-        }
-
-        .header {
-            margin-top: 50px;
-        }
-
-        .header h2 {
-            /*font-family: 'Noto Sans KR', sans-serif;*/
-            height: 33px;
-            font-size: 42px;
-            font-weight: 500;
-            font-stretch: normal;
-            font-style: normal;
-            line-height: 0.79;
-            letter-spacing: -0.5px;
-            text-align: center;
-            color: #ffffff;
-        }
-
-        .header p {
-            margin: 40px auto;
-            width: 217px;
-            height: 48px;
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: 16px;
-            font-weight: 500;
-            font-stretch: normal;
-            font-style: normal;
-            line-height: 1.5;
-            letter-spacing: -1.12px;
-            text-align: center;
-            color: #ffffff;
-        }
-
-        textarea.field {
-            width: 502px !important;
-            height: 146px;
-            border-radius: 5px;
-            background-color: #ffffff;
-            border: none;
-            padding: 18px;
-            resize: none;
-        }
-
-        textarea.field::placeholder {
-            width: 216px;
-            height: 16px;
-            font-family: 'Noto Sans KR', sans-serif;
-            font-size: 16px;
-            font-weight: normal;
-            font-stretch: normal;
-            font-style: normal;
-            line-height: 1;
-            letter-spacing: -0.96px;
-            text-align: left;
-            color: #868e96;
-        }
-
-        .card {
-            width: 538px;
-            border-radius: 5px;
-            background-color: #ffffff;
-            margin-bottom: 12px;
-        }
-
-        .card .metadata {
-            position: relative;
-            display: flex;
-            font-family: 'Spoqa Han Sans';
-            font-size: 11px;
-            font-weight: normal;
-            font-stretch: normal;
-            font-style: normal;
-            line-height: 1;
-            letter-spacing: -0.77px;
-            text-align: left;
-            color: #adb5bd;
-            height: 14px;
-            padding: 10px 23px;
-        }
-
-        .card .metadata .date {
-
-        }
-
-        .card .metadata .username {
-            margin-left: 20px;
-        }
-
-        .contents {
-            padding: 0px 23px;
-            word-wrap: break-word;
-            word-break: break-all;
-        }
-
-        .contents div.edit {
-            display: none;
-        }
-
-        .contents textarea.te-edit {
-            border-right: none;
-            border-top: none;
-            border-left: none;
-            resize: none;
-            border-bottom: 1px solid #212529;
-            width: 100%;
-            font-family: 'Spoqa Han Sans';
-        }
-
-        .footer {
-            position: relative;
-            height: 40px;
-        }
-
-        .footer img.icon-start-edit {
-            cursor: pointer;
-            position: absolute;
-            bottom: 14px;
-            right: 55px;
-            width: 18px;
-            height: 18px;
-        }
-
-        .footer img.icon-end-edit {
-            cursor: pointer;
-            position: absolute;
-            display: none;
-            bottom: 14px;
-            right: 55px;
-            width: 20px;
-            height: 15px;
-        }
-
-        .footer img.icon-delete {
-            cursor: pointer;
-            position: absolute;
-            bottom: 12px;
-            right: 19px;
-            width: 14px;
-            height: 18px;
-        }
-
-        #cards-box {
-            margin-top: 12px;
-        }
-    </style>
+    <script type="text/javascript" th:src="@{/js/basic.js}"></script>
+    <title>나만의 셀렉샵</title>
 </head>
-
 <body>
-<div class="background-header">
-
-</div>
-<div class="background-body">
-
-</div>
-<div class="wrap">
-    <div class="header">
-        <h2>Timeline Service</h2>
-        <p>
-            공유하고 싶은 소식을 입력하세요.
-        </p>
+<div class="header" style="position:relative;">
+    <!--headr 추가 부분-->
+    <div id="login-true" style="display: none">
+        <div id="header-title-login-user">
+            <!--            <span th:value="${username}"></span> 님의-->
+            <div id="username"></div> 님의
+        </div>
+        <div id="header-title-select-shop">
+            Select Shop
+        </div>
+        <a id="login-text" href="javascript:logout('check')">
+            로그아웃
+        </a>
     </div>
-    <div class="area-write">
-        <textarea class="field" placeholder="공유하고 싶은 소식을 입력하세요." name="contents" th:id="contents" cols="30"
-                  rows="10"></textarea>
-        <img src="/images/send.png" alt="" onclick="writePost()">
+    <div id="login-false" >
+        <div id="header-title-select-shop">
+            Select Shop
+        </div>
+        <a id="sign-text" href="/api/user/signup">
+            회원가입
+        </a>
+        <a id="login-text" href="/api/user/login-page">
+            로그인
+        </a>
     </div>
-    <div id="cards-box" class="area-read">
+    <!--/headr 추가 부분-->
+</div>
+<div class="nav">
+    <div class="nav-see active">
+        모아보기
+    </div>
+    <div class="nav-search">
+        탐색하기
+    </div>
+</div>
+<div id="see-area">
+    <div class="folder-bar folder-black">
+        <div>
+            <button id="folder-all" class="folder-bar-item folder-button product-folder folder-active" onclick="openFolder()">전체</button>
+        </div>
+        <div id="fragment">
+            <div th:each="folder : ${folders}">
+                <button class="folder-bar-item folder-button product-folder"
+                        th:value="${folder.id}"
+                        th:utext="${folder.name}"
+                        th:attr="onclick=|openFolder(${folder.id})|">
+                </button>
+            </div>
+        </div>
+        <div>
+            <button id="folder-add" class="folder-bar-item folder-button product-folder" onclick="openAddFolderPopup()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30px" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
+                    <path d="M.5 3l.04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.684.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"/>
+                    <path d="M13.5 10a.5.5 0 0 1 .5.5V12h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V13h-1.5a.5.5 0 0 1 0-1H13v-1.5a.5.5 0 0 1 .5-.5z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+    <div class="pagination">
+        정렬:
+        <select id="sorting" onchange="showProduct()">
+            <option value="id">ID</option>
+            <option value="title">상품명</option>
+            <option value="lprice">최저가</option>
+        </select>
+        <input type="radio" name="isAsc" value="true" onchange="showProduct()" checked /> 오름차순
+        <input type="radio" name="isAsc" value="false" onchange="showProduct()" /> 내림차순
+    </div>
+    <div id="pagination" class="pagination"></div>
+    <ul id="product-container">
+    </ul>
+    <div id="container2" class="popup-container">
+        <div class="popup" style="width:410px; height:auto">
+            <button id="close2" class="close">
+                X
+            </button>
+            <h1>🗂 폴더 추가하기</h1>
+            <p>폴더를 추가해서 관심상품을 관리해보세요!</p>
+            <div id="folders-input">
+                <input type="text" class="folderToAdd" placeholder="추가할 폴더명">
+                <!--                <div class="control" data-v-79d84978="" style="width:20px"><a class="button is-primary is-outlined" data-v-79d84978=""><span class="icon" data-v-79d84978=""><svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="times" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512" class="svg-inline&#45;&#45;fa fa-times fa-w-11" data-v-79d84978=""><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z" data-v-79d84978="" class=""></path></svg></span></a></div>-->
+            </div>
+            <div onclick="addFolderInput()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30px" fill="currentColor" class="bi bi-folder-plus" viewBox="0 0 16 16">
+                    <path d="M.5 3l.04.87a1.99 1.99 0 0 0-.342 1.311l.637 7A2 2 0 0 0 2.826 14H9v-1H2.826a1 1 0 0 1-.995-.91l-.637-7A1 1 0 0 1 2.19 4h11.62a1 1 0 0 1 .996 1.09L14.54 8h1.005l.256-2.819A2 2 0 0 0 13.81 3H9.828a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 6.172 1H2.5a2 2 0 0 0-2 2zm5.672-1a1 1 0 0 1 .707.293L7.586 3H2.19c-.24 0-.47.042-.684.12L1.5 2.98a1 1 0 0 1 1-.98h3.672z"/>
+                    <path d="M13.5 10a.5.5 0 0 1 .5.5V12h1.5a.5.5 0 0 1 0 1H14v1.5a.5.5 0 0 1-1 0V13h-1.5a.5.5 0 0 1 0-1H13v-1.5a.5.5 0 0 1 .5-.5z"/>
+                </svg>
+            </div>
+            <button id="add-folder-btn" class="cta2" onclick="addFolder()">추가하기</button>
+        </div>
+    </div>
+</div>
+<div id="search-area">
+    <div>
+        <input type="text" id="query">
+    </div>
+    <div id="search-result-box">
 
+    </div>
+    <div id="container" class="popup-container">
+        <div class="popup">
+            <button id="close" class="close">
+                X
+            </button>
+            <h1>⏰최저가 설정하기</h1>
+            <p>최저가를 설정해두면 선택하신 상품의 최저가가 떴을 때<br/> 표시해드려요!</p>
+            <div>
+                <input type="text" id="myprice" placeholder="200,000">원
+            </div>
+            <button class="cta" onclick="setMyprice()">설정하기</button>
+        </div>
     </div>
 </div>
 </body>
-
 </html>

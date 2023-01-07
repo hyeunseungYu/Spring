@@ -1,7 +1,9 @@
 package mySelectShopBeta.Dto;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import mySelectShopBeta.naver.dto.ItemDto;
 
 @Getter
 @NoArgsConstructor
@@ -15,4 +17,11 @@ public class ProductRequestDto {
     private String link;
     // 관심상품의 최저가
     private int lprice;
+
+    public ProductRequestDto(ItemDto itemDto) {
+        this.title = itemDto.getTitle();
+        this.image = itemDto.getImage();
+        this.link = itemDto.getLink();
+        this.lprice = itemDto.getLprice();
+    }
 }
