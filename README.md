@@ -83,3 +83,26 @@ return new ModelAndView("index", "123");
 
 </details>
 <br>
+
+<details>
+<summary style="font-size: x-large">@Entity</summary>
+기본 생성자는 필수로 있어야 함! -> jpa 규정이라고 함.   <br>
+저장할 필드에 final사용할 수 없음   <br>
+jpa를 사용해서 테이블과 매핑할 클래스는 @Entity가 필수<br>
+final클래스, enum, interface, inner(중첩클래스) 클래스는 @Entity를 사용할 수 없음<br>
+예시) @Entity(name="Member")<br>
+jpa가 내부적으로 구분하는 이름으로, 설정을 따로 안하면 기본값으로 클래스 이름을 그대로 사용한다.<br>
+클래스 이름이 겹치거나 하는 게 아니면 바꾸지 말자.<br>
+</details>
+<br>
+
+<details>
+<summary style="font-size: x-large">@Table</summary>
+Entity에 해당되는 파일에 @Entity와 @Table을 사용할 수 있음.<br>
+일단 @Entity는 필수. 다만 Entity만 사용했을 때에는 DB와 연결할 때, 테이블 명이 클래스와 동일하게 설명됨<br>
+즉 클래스 이름이 Member라면, DB에서 Member 테이블로 연결된다는 얘기.<br>
+@Table 어노테이션은 실제 DB에 붙을 테이블명을 말함.<br>
+예를들어 @Entity / @Table(name = "hello")라고 지정을 해 두면,<br>
+createQuery(select * from Member)로 호출을 하면 호출은 엔티티 클래스 이름으로 가는데, 실제 DB에는 테이블 네임으로 붙는다<br>
+</details>
+<br>
