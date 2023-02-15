@@ -2,8 +2,10 @@ package mySelectShopBeta.naver.controller;
 
 
 import lombok.RequiredArgsConstructor;
+import mySelectShopBeta.entity.UserRoleEnum;
 import mySelectShopBeta.security.UserDetailsImpl;
 import mySelectShopBeta.service.FolderService;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 public class ShopController {
 
     private final FolderService folderService;
+
 
 
     @GetMapping("/shop")

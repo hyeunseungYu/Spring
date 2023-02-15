@@ -17,6 +17,7 @@ public class SingletoneTest {
 //        1.조회: 호출할 때 마다 객체를 생성
         MemberService memberService1 = appconfig.memberService();
 
+
 //        2.조회: 호출할 때 마다 객체를 생성
         MemberService memberService2 = appconfig.memberService();
 
