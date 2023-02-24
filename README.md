@@ -136,20 +136,74 @@ createQuery(select * from Member)로 호출을 하면 호출은 엔티티 클래
 
 <details>
 <summary style="font-size: x-large">인덱스</summary>
-인덱스는 백과사전의 목차.<br>
-저는 이렇게 이해했습니다.<br>
+인덱스는 백과사전의 목차라고 이해했다.<br>
+
 <br>
-우리가 원하는 특정 단어를 찾아볼 때, 첫 장부터 하나씩 찾아보는 것은 굉장히 비효율적입니다.<br>
-우리는 원하는 단어를 더욱 빠르게 찾기 위해서 사전의 목차를 확인하고 단어가 어디에 포함되어 있는지를 찾아, 바로 원하는 페이지로 이동할 것입니다.<br>
-전 이게 인덱스라고 이해했습니다.<br>
+우리가 원하는 특정 단어를 찾아볼 때, 첫 장부터 하나씩 찾아보는 것은 굉장히 비효율적이다.<br>
+우리는 원하는 단어를 더욱 빠르게 찾기 위해서 사전의 목차를 확인하고 단어가 어디에 포함되어 있는지를 찾아, 바로 원하는 페이지로 이동할 것이다.<br>
 <br>
 좀 더 그럴듯하게 말하자면,<br>
 데이터 검색 속도를 향상시키기 위해 db에서 테이블의 특정 column(field)을 기준으로 잡고,<br>
 <br>
-각 row(record)의 값을 가지고 있는 것을 복사하여 별도 생성한 것이라고도 할 수 있습니다.<br>
+각 row(record)의 값을 가지고 있는 것을 복사하여 별도 생성하여 정렬한 것이라고도 할 수 있습니다.<br>
 (출처: https://en.wikipedia.org/wiki/Database_index)<br>
 
-인덱스를 사용하면 데이터 검색 속도가 대폭 향상되지만, 인덱스를 생성하는 작업이나 인덱스를 관리하는 데 추가로 리소스가 소모된다는 단점도 있습니다.<br>
+인덱스를 사용하면 데이터 검색 속도가 대폭 향상되지만, 인덱스를 생성하는 작업이나 인덱스를 관리하는 데 추가로 리소스가 소모된다는 단점이 있다.<br>
 (인덱스를 생성하는 작업과 유지 관리하는 오버헤드가 발생!)<br>
+</details>
+<br>
+
+
+<details>
+<summary style="font-size: x-large">제네릭</summary>
+
+다양한 타입의 객체를 다루는 메서드나 컬렉션 클래스를 컴파일 할 때 타입 체크를 해 주는 기능이다.<br>
+제네릭 타입은 클래스와 메서드에 선언할 수 있다.<br>
+<br>
+// 일반적인 클래스<br>
+class Box {<br>
+Object item;<br>
+<br>
+void setItem(Object item) {this.item = item;}<br>
+Object getItem() {return item;}<br>
+}<br>
+<br>
+// 제네릭 클래스<br>
+class Box&lt;T> {<br>
+T item;<br>
+<br>
+void setItem(T item) {this.item = item;}<br>
+T getItem() {return item;}<br>
+}<br>
+
+위에 제네릭 클래스를 선언할 때 뒤에 &lt;T>가 붙었는데, 여기서 T를 타입 변수(type variable)이라고 한다.<br>
+이 타입 변수로 어떤 타입이 들어가게 될 것이라는 것을 표시를 해 주는 것이다.<br>
+임의의 변수이므로 무조건 T를 써야되는 것은 아니지만, 그래도 네이밍을 지켜주는 것이 좋다.<br>
+<br>
+E : 요소 (Element, 자바 컬렉션에서 주로 사용됨)<br>
+K : 키<br>
+N : 숫자<br>
+T : 타입<br>
+V : 값<br>
+S,U,V : 두번 째, 세 번째, 네 번째에 선언된 타입<br>
+
+</details>
+<br>
+
+
+<details>
+<summary style="font-size: x-large">Element</summary>
+
+자바 컬렉션을 뜯어보다 보면 제네릭에서 E를 많이 마주한다.<br>
+여기에서 E는 element, 요소를 뜻한다.<br>
+<br>
+element는 어떤 자료구조에서 하나의 값 또는 객체를 의미한다.<br>
+말 그대로 그 자료구조의 구성 요소를 의미하는 것이다.<br>
+<br>
+예를 들어, 정수형 배열에 대한 element는 배열 안에 저장된 개별적인 정수 값이다.<br>
+배열 {1,2,3,4,5}에 대한 element는 1,2,3,4,5이다.<br>
+<br>
+ArrayList<E>의 경우에서는 ArrayList가 포함하는 element의 타입을 의미하는 것이다.<br>
+ex) ArrayList<String>이면 해당 ArrayList의 element 타입이 String이라는 것<br>
 </details>
 <br>
