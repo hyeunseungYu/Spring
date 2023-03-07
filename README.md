@@ -207,3 +207,11 @@ ArrayList<E>의 경우에서는 ArrayList가 포함하는 element의 타입을 �
 ex) ArrayList<String>이면 해당 ArrayList의 element 타입이 String이라는 것<br>
 </details>
 <br>
+
+<details>
+<summary style="font-size: x-large">N + 1 문제</summary>
+
+첫 번째 쿼리의 결과로 N번만큼 쿼리가 추가 실행되는 것.<br>
+
+</details>
+<br>
