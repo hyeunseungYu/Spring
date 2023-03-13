@@ -21,11 +21,11 @@ public class OrderQueryRepository {
      */
     public List<OrderQueryDto> findOrderQueryDtos() {
         //루트 조회(toOne 코드를 모두 한번에 조회)
-        List<OrderQueryDto> result = findOrders();
+        List<OrderQueryDto> result = findOrders(); //query 1번 -> N개
 
         //루프를 돌면서 컬렉션 추가(추가 쿼리 실행)
         result.forEach(o -> {
-            List<OrderItemQueryDto> orderItems = findOrderItems(o.getOrderId());
+            List<OrderItemQueryDto> orderItems = findOrderItems(o.getOrderId()); //query N번
             o.setOrderItems(orderItems);
         });
         return result;
@@ -36,7 +36,7 @@ public class OrderQueryRepository {
      */
     private List<OrderQueryDto> findOrders() {
         return em.createQuery(
-                "select new jpabook.jpashop.repository.order.query.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address)" +
+                "select new jpa.repository.order.query.OrderQueryDto(o.id, m.name, o.orderDate, o.status, d.address)" +
                         " from Order o" +
                         " join o.member m" +
                         " join o.delivery d", OrderQueryDto.class)
@@ -48,7 +48,7 @@ public class OrderQueryRepository {
      */
     private List<OrderItemQueryDto> findOrderItems(Long orderId) {
         return em.createQuery(
-                "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                "select new jpa .repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
                         " from OrderItem oi" +
                         " join oi.item i" +
                         " where oi.order.id = : orderId", OrderItemQueryDto.class)
@@ -84,7 +84,7 @@ public class OrderQueryRepository {
 
     private Map<Long, List<OrderItemQueryDto>> findOrderItemMap(List<Long> orderIds) {
         List<OrderItemQueryDto> orderItems = em.createQuery(
-                "select new jpabook.jpashop.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
+                "select new jpa.repository.order.query.OrderItemQueryDto(oi.order.id, i.name, oi.orderPrice, oi.count)" +
                         " from OrderItem oi" +
                         " join oi.item i" +
                         " where oi.order.id in :orderIds", OrderItemQueryDto.class)
@@ -92,12 +92,12 @@ public class OrderQueryRepository {
                 .getResultList();
 
         return orderItems.stream()
-                .collect(Collectors.groupingBy(OrderItemQueryDto::getOrderId));
+                .collect(Collectors.groupingBy(orderItemQueryDto -> orderItemQueryDto.getOrderId()));
     }
 
     public List<OrderFlatDto> findAllByDto_flat() {
         return em.createQuery(
-                "select new jpabook.jpashop.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
+                "select new jpa.repository.order.query.OrderFlatDto(o.id, m.name, o.orderDate, o.status, d.address, i.name, oi.orderPrice, oi.count)" +
                         " from Order o" +
                         " join o.member m" +
                         " join o.delivery d" +

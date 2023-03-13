@@ -26,6 +26,7 @@ public class OrderFlatDto {
         this.orderDate = orderDate;
         this.orderStatus = orderStatus;
         this.address = address;
+
         this.itemName = itemName;
         this.orderPrice = orderPrice;
         this.count = count;
