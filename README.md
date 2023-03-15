@@ -215,3 +215,32 @@ ex) ArrayList<String>이면 해당 ArrayList의 element 타입이 String이라�
 
 </details>
 <br>
+
+<details>
+<summary style="font-size: x-large">mySQL pessimistic Lock</summary>
+
+실제로 데이터에 락을 걸어 정합성을 맞추는 방법이다.<br>
+락을 걸게 되면 다른 트랜잭션에서는 락이 해제되기 전까지는 데이터를 건들 수 없다.<br>
+
+락을 통해 데이터를 제어하기 때문에 데이터의 정합성을 보장할 수는 있으나,<br>
+데이터 자체에 락이 걸리기 때문에 성능 저하가 발생할 수 있다.<br>
+
+또한, 서로 다른 스레드에서 각자 락이 걸린 데이터에 접근할 때 데드락이 발생할 수 있으며<br>
+락을 걸어둔 서버에 장애가 발생하면 해당 데이터에 대한 락이 풀리지 않아 다른 서버에서 해당 데이터를 수정할 수 없는 상황이 발생할 수 있다.<br>
+
+</details>
+<br>
+
+<details>
+<summary style="font-size: x-large">redisson lock</summary>
+
+redis의 pub-sub 기반 message broker 기능을 이용하여 락을 구현하는 방법이다.<br>
+락을 해제하는 측이 락을 대기하는 프로세스에게 락 획득을 시도해도 된다는 메시지를 전달하는 방식으로 동작하며, 이 방법을 사용하면 끊임없이 redis 서버에 락 획득이 가능한지 여부를 확인하는 spin lock을 사용하지 않아도 된다.<br>
+
+이 방법은 우리가 직접 구현할 필요가 없이 redisson이라는 라이브러리를 사용하면 된다. 이미 메시지 브로커 기능을 활용하여 락을 구현해 두었기 때문이다.<br>
+
+또한 이 라이브러리는 타임아웃을 구현하여 일정 시간동안 락을 획득하지 못하면 예외를 발생시킬 수 있다.<br>
+(pessimistic lock에서도 timeout을 구현할 수는 있다고 함. 다만 락을 유지하는 동안 리소스를 계속 점유하니 db에 계속 부하를 주게 되는 문제가 있다고 함.)<br>
+
+</details>
+<br>
